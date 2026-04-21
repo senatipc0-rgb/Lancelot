@@ -319,6 +319,33 @@ const asistenciaController = {
     }
   },
 
+  async getAttendanceByDate(req, res) {
+    try {
+      const { date } = req.params;
+
+      if (!date) {
+        return res.status(400).json({
+          success: false,
+          message: 'Se requiere una fecha'
+        });
+      }
+
+      const attendances = await Asistencia.getByDate(date);
+
+      res.status(200).json({
+        success: true,
+        data: attendances,
+        count: attendances.length
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: 'Error al obtener asistencia por fecha',
+        error: error.message
+      });
+    }
+  },
+
   async getStudentStats(req, res) {
     try {
       const { estudiante_id } = req.params;
