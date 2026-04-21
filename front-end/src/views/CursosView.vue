@@ -1,22 +1,20 @@
 <template>
   <div class="page">
-    <!-- Page header -->
     <div class="page-header">
       <div>
-        <h1 class="page-title">Estudiantes</h1>
-        <p class="page-sub">Gestión del padrón de estudiantes</p>
+        <h1 class="page-title">Cursos</h1>
+        <p class="page-sub">Catálogo de cursos académicos</p>
       </div>
       <button @click="openNew" class="btn btn-primary">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Nuevo estudiante
+        Nuevo curso
       </button>
     </div>
 
-    <!-- Form panel -->
     <transition name="slide-down">
       <div v-if="showForm" class="form-card">
         <div class="form-card-header">
-          <h2>{{ edit ? 'Editar estudiante' : 'Nuevo estudiante' }}</h2>
+          <h2>{{ edit ? 'Editar curso' : 'Nuevo curso' }}</h2>
           <button @click="clear" class="btn-close" aria-label="Cerrar">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
@@ -24,27 +22,27 @@
         <form @submit.prevent="save" class="form-grid">
           <div class="field">
             <label>Código <span class="req">*</span></label>
-            <input v-model="form.codigo_estudiante" placeholder="Ej: EST-001" required>
+            <input v-model="form.codigo_curso" placeholder="Ej: MAT-101" required>
           </div>
           <div class="field">
-            <label>Nombres <span class="req">*</span></label>
-            <input v-model="form.nombres" placeholder="Nombres completos" required>
+            <label>Nombre <span class="req">*</span></label>
+            <input v-model="form.nombre" placeholder="Nombre del curso" required>
           </div>
           <div class="field">
-            <label>Apellidos <span class="req">*</span></label>
-            <input v-model="form.apellidos" placeholder="Apellidos completos" required>
+            <label>Descripción</label>
+            <input v-model="form.descripcion" placeholder="Descripción breve">
           </div>
           <div class="field">
-            <label>Correo electrónico <span class="req">*</span></label>
-            <input v-model="form.correo" type="email" placeholder="correo@ejemplo.com" required>
+            <label>Créditos</label>
+            <input v-model.number="form.creditos" type="number" min="0" placeholder="0">
           </div>
           <div class="field">
-            <label>Teléfono</label>
-            <input v-model="form.telefono" placeholder="Número de contacto">
+            <label>Período</label>
+            <input v-model="form.periodo" placeholder="Ej: I, II, Verano">
           </div>
           <div class="field">
-            <label>Programa <span class="req">*</span></label>
-            <input v-model="form.programa" placeholder="Programa académico" required>
+            <label>Año</label>
+            <input v-model.number="form.anno" type="number" placeholder="2026">
           </div>
           <div class="form-actions">
             <button type="button" @click="clear" class="btn btn-ghost">Cancelar</button>
@@ -57,57 +55,58 @@
       </div>
     </transition>
 
-    <!-- Table card -->
     <div class="table-card">
       <div class="table-toolbar">
         <div class="search-box">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input v-model="search" placeholder="Buscar por nombre, código o programa…">
+          <input v-model="search" placeholder="Buscar por nombre, código o período…">
           <button v-if="search" @click="search = ''" class="clear-search">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
         </div>
-        <span class="count-badge">{{ filtered.length }} registros</span>
+        <span class="count-badge">{{ filtered.length }} cursos</span>
       </div>
 
-      <!-- Loading -->
       <div v-if="loading" class="loading-rows">
         <div v-for="i in 4" :key="i" class="skeleton-row">
           <div class="sk sk-sm"></div>
           <div class="sk sk-lg"></div>
           <div class="sk sk-md"></div>
-          <div class="sk sk-md"></div>
+          <div class="sk sk-sm"></div>
           <div class="sk sk-sm"></div>
         </div>
       </div>
 
-      <!-- Empty -->
       <div v-else-if="filtered.length === 0" class="empty-state">
-        <div class="empty-icon">👨‍🎓</div>
-        <p>{{ search ? 'Sin resultados para tu búsqueda' : 'No hay estudiantes registrados' }}</p>
+        <div class="empty-icon">📚</div>
+        <p>{{ search ? 'Sin resultados para tu búsqueda' : 'No hay cursos registrados' }}</p>
         <button v-if="!search" @click="openNew" class="btn btn-primary btn-sm">Agregar primero</button>
       </div>
 
-      <!-- Table -->
       <div v-else class="table-wrap">
         <table>
           <thead>
             <tr>
               <th>Código</th>
-              <th>Nombre completo</th>
-              <th>Correo</th>
-              <th>Teléfono</th>
-              <th>Programa</th>
+              <th>Nombre</th>
+              <th>Descripción</th>
+              <th>Créditos</th>
+              <th>Período</th>
+              <th>Año</th>
               <th class="th-actions">Acciones</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="item in filtered" :key="item.id">
-              <td><span class="badge badge-blue">{{ item.codigo_estudiante }}</span></td>
-              <td class="td-name">{{ item.nombres }} {{ item.apellidos }}</td>
-              <td class="td-muted">{{ item.correo }}</td>
-              <td class="td-muted">{{ item.telefono || '—' }}</td>
-              <td>{{ item.programa }}</td>
+              <td><span class="badge badge-purple">{{ item.codigo_curso }}</span></td>
+              <td class="td-name">{{ item.nombre }}</td>
+              <td class="td-muted">{{ item.descripcion || '—' }}</td>
+              <td>
+                <span v-if="item.creditos" class="badge badge-blue">{{ item.creditos }} cr.</span>
+                <span v-else class="td-muted">—</span>
+              </td>
+              <td class="td-muted">{{ item.periodo || '—' }}</td>
+              <td class="td-muted">{{ item.anno }}</td>
               <td class="td-actions">
                 <button @click="editItem(item)" class="icon-btn" title="Editar">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
@@ -126,7 +125,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { estudianteService } from '../services/api'
+import { cursoService } from '../services/api'
 import Swal from 'sweetalert2'
 
 const list = ref([])
@@ -136,27 +135,21 @@ const showForm = ref(false)
 const edit = ref(false)
 const editId = ref(null)
 const search = ref('')
-const form = ref({ codigo_estudiante: '', nombres: '', apellidos: '', correo: '', telefono: '', programa: '' })
+const form = ref({ codigo_curso: '', nombre: '', descripcion: '', creditos: 0, periodo: '', anno: new Date().getFullYear() })
 
 const filtered = computed(() => {
   const q = search.value.toLowerCase().trim()
   if (!q) return list.value
-  return list.value.filter(e =>
-    `${e.nombres} ${e.apellidos} ${e.codigo_estudiante} ${e.programa}`.toLowerCase().includes(q)
+  return list.value.filter(c =>
+    `${c.nombre} ${c.codigo_curso} ${c.periodo || ''} ${c.descripcion || ''}`.toLowerCase().includes(q)
   )
 })
 
 const load = async () => {
   loading.value = true
-  try { 
-    const data = await estudianteService.getAll()
-    list.value = Array.isArray(data) ? data : []
-  } catch (e) {
-    console.error('Error cargando:', e.message)
-    list.value = []
-  } finally { 
-    loading.value = false 
-  }
+  try { list.value = await cursoService.getAll() }
+  catch (_) {}
+  finally { loading.value = false }
 }
 
 const openNew = () => { clear(); showForm.value = true }
@@ -164,8 +157,8 @@ const openNew = () => { clear(); showForm.value = true }
 const save = async () => {
   saving.value = true
   try {
-    if (edit.value) await estudianteService.update(editId.value, form.value)
-    else await estudianteService.create(form.value)
+    if (edit.value) await cursoService.update(editId.value, { ...form.value, esta_activo: true })
+    else await cursoService.create(form.value)
     clear()
     await load()
     Swal.fire({ icon: 'success', title: edit.value ? 'Actualizado' : 'Guardado', timer: 1400, showConfirmButton: false, toast: true, position: 'top-end' })
@@ -186,7 +179,7 @@ const editItem = (item) => {
 
 const deleteItem = async (id) => {
   const r = await Swal.fire({
-    title: '¿Eliminar estudiante?',
+    title: '¿Eliminar curso?',
     text: 'Esta acción no se puede deshacer.',
     icon: 'warning',
     showCancelButton: true,
@@ -196,7 +189,7 @@ const deleteItem = async (id) => {
     cancelButtonColor: '#6b7280'
   })
   if (r.isConfirmed) {
-    await estudianteService.delete(id)
+    await cursoService.delete(id)
     await load()
     Swal.fire({ icon: 'success', title: 'Eliminado', timer: 1200, showConfirmButton: false, toast: true, position: 'top-end' })
   }
@@ -206,7 +199,7 @@ const clear = () => {
   showForm.value = false
   edit.value = false
   editId.value = null
-  form.value = { codigo_estudiante: '', nombres: '', apellidos: '', correo: '', telefono: '', programa: '' }
+  form.value = { codigo_curso: '', nombre: '', descripcion: '', creditos: 0, periodo: '', anno: new Date().getFullYear() }
 }
 
 onMounted(load)

@@ -57,6 +57,44 @@ CREATE TABLE IF NOT EXISTS usuarios (
   INDEX idx_email (email)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Tabla de cursos
+CREATE TABLE IF NOT EXISTS cursos (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  nombre VARCHAR(150) NOT NULL,
+  codigo_curso VARCHAR(20) UNIQUE NOT NULL,
+  descripcion TEXT,
+  creditos INT DEFAULT 0,
+  grado VARCHAR(50),
+  seccion VARCHAR(10),
+  periodo VARCHAR(50),
+  anno INT,
+  max_estudiantes INT DEFAULT 30,
+  esta_activo BOOLEAN DEFAULT TRUE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX idx_codigo_curso (codigo_curso),
+  INDEX idx_periodo (periodo),
+  INDEX idx_anno (anno)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Tabla de inscripciones
+CREATE TABLE IF NOT EXISTS inscripciones (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  estudiante_id INT NOT NULL,
+  curso_id INT NOT NULL,
+  fecha_inscripcion DATE NOT NULL,
+  estado ENUM('inscrito', 'retirado', 'completado', 'reprobado') DEFAULT 'inscrito',
+  nota_final DECIMAL(5,2),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (estudiante_id) REFERENCES estudiantes(id) ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY (curso_id) REFERENCES cursos(id) ON DELETE CASCADE ON UPDATE CASCADE,
+  UNIQUE KEY unique_estudiante_curso (estudiante_id, curso_id),
+  INDEX idx_estudiante_id (estudiante_id),
+  INDEX idx_curso_id (curso_id),
+  INDEX idx_estado (estado)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- Insertar datos de prueba (opcional)
 -- INSERT INTO estudiantes (codigo_estudiante, nombres, apellidos, correo, telefono, programa) VALUES
 -- ('EST001', 'Juan', 'Pérez', 'juan.perez@email.com', '1234567890', 'Ingeniería de Sistemas'),

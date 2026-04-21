@@ -5,6 +5,9 @@ const path = require('path');
 
 const studentRoutes = require('./routes/estudiantes');
 const attendanceRoutes = require('./routes/asistencias');
+const courseRoutes = require('./routes/cursos');
+const inscripcionRoutes = require('./routes/inscripciones');
+const usuarioRoutes = require('./routes/usuarios');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -28,6 +31,9 @@ app.get('/api/health', (req, res) => {
 
 app.use('/api/estudiantes', studentRoutes);
 app.use('/api/asistencias', attendanceRoutes);
+app.use('/api/cursos', courseRoutes);
+app.use('/api/inscripciones', inscripcionRoutes);
+app.use('/api/usuarios', usuarioRoutes);
 
 app.use((req, res) => {
   res.status(404).json({

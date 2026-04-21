@@ -105,3 +105,119 @@ POST http://localhost:3000/api/asistencias
 ```
 GET http://localhost:3000/api/health
 ```
+
+---
+
+## Cursos
+
+### GET - Listar todos
+```
+GET http://localhost:3000/api/cursos
+```
+
+---
+
+### GET - Obtener por ID
+```
+GET http://localhost:3000/api/cursos/1
+```
+
+---
+
+### POST - Crear curso
+```
+POST http://localhost:3000/api/cursos
+```
+
+**Body (JSON):**
+```json
+{
+  "nombre": "Introducción a la Programación",
+  "codigo_curso": "INF101",
+  "descripcion": "Curso básico de programación",
+  "creditos": 4,
+  "grado": "10mo",
+  "seccion": "A",
+  "periodo": "Enero-Abril",
+  "anno": 2026,
+  "max_estudiantes": 30
+}
+```
+
+---
+
+### PUT - Actualizar curso
+```
+PUT http://localhost:3000/api/cursos/1
+```
+
+---
+
+### DELETE - Eliminar curso
+```
+DELETE http://localhost:3000/api/cursos/1
+```
+
+---
+
+## Inscripciones
+
+### GET - Listar todas
+```
+GET http://localhost:3000/api/inscripciones
+```
+
+---
+
+### GET - Por estudiante
+```
+GET http://localhost:3000/api/inscripciones/estudiante/1
+```
+
+---
+
+### GET - Por curso
+```
+GET http://localhost:3000/api/inscripciones/curso/1
+```
+
+---
+
+### POST - Crear inscripción
+```
+POST http://localhost:3000/api/inscripciones
+```
+
+**Body (JSON):**
+```json
+{
+  "estudiante_id": 1,
+  "curso_id": 1,
+  "estado": "inscrito",
+  "nota_final": null
+}
+```
+
+**Estados válidos:** `inscrito`, `retirado`, `completado`, `reprobado`
+
+---
+
+### PUT - Actualizar inscripción
+```
+PUT http://localhost:3000/api/inscripciones/1
+```
+
+**Body (JSON):**
+```json
+{
+  "estado": "completado",
+  "nota_final": 85.5
+}
+```
+
+---
+
+### DELETE - Eliminar inscripción
+```
+DELETE http://localhost:3000/api/inscripciones/1
+```
