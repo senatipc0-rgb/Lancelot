@@ -1,15 +1,30 @@
--- ============================================
--- Script de inicialización de base de datos
--- Sistema de Gestión de Asistencias
--- ============================================
+# Comandos MySQL - Sistema de Gestión de Asistencias
 
+## Conexión a MySQL
+
+```bash
+# Desde línea de comandos
+mysql -u root -p
+
+# O desde MySQL Workbench
+# Conectar a localhost:3306
+```
+
+## Crear Base de Datos
+
+```sql
 CREATE DATABASE IF NOT EXISTS sistema_asistencia
   CHARACTER SET utf8mb4
   COLLATE utf8mb4_unicode_ci;
 
 USE sistema_asistencia;
+```
 
--- Tabla de estudiantes
+## Tablas
+
+### Estudiantes
+
+```sql
 CREATE TABLE IF NOT EXISTS estudiantes (
   id INT PRIMARY KEY AUTO_INCREMENT,
   codigo_estudiante VARCHAR(20) UNIQUE NOT NULL,
@@ -26,8 +41,11 @@ CREATE TABLE IF NOT EXISTS estudiantes (
   INDEX idx_estado (estado),
   INDEX idx_programa (programa)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+```
 
--- Tabla de asistencias
+### Asistencias
+
+```sql
 CREATE TABLE IF NOT EXISTS asistencias (
   id INT PRIMARY KEY AUTO_INCREMENT,
   estudiante_id INT NOT NULL,
@@ -42,8 +60,11 @@ CREATE TABLE IF NOT EXISTS asistencias (
   INDEX idx_estudiante_id (estudiante_id),
   INDEX idx_estado (estado)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+```
 
--- Tabla opcional para usuarios/administradores (futuro)
+### Usuarios
+
+```sql
 CREATE TABLE IF NOT EXISTS usuarios (
   id INT PRIMARY KEY AUTO_INCREMENT,
   username VARCHAR(50) UNIQUE NOT NULL,
@@ -56,8 +77,11 @@ CREATE TABLE IF NOT EXISTS usuarios (
   INDEX idx_username (username),
   INDEX idx_email (email)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+```
 
--- Tabla de cursos
+### Cursos
+
+```sql
 CREATE TABLE IF NOT EXISTS cursos (
   id INT PRIMARY KEY AUTO_INCREMENT,
   nombre VARCHAR(150) NOT NULL,
@@ -76,8 +100,11 @@ CREATE TABLE IF NOT EXISTS cursos (
   INDEX idx_periodo (periodo),
   INDEX idx_anno (anno)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+```
 
--- Tabla de inscripciones
+### Inscripciones
+
+```sql
 CREATE TABLE IF NOT EXISTS inscripciones (
   id INT PRIMARY KEY AUTO_INCREMENT,
   estudiante_id INT NOT NULL,
@@ -94,9 +121,27 @@ CREATE TABLE IF NOT EXISTS inscripciones (
   INDEX idx_curso_id (curso_id),
   INDEX idx_estado (estado)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+```
 
--- Insertar datos de prueba (opcional)
--- INSERT INTO estudiantes (codigo_estudiante, nombres, apellidos, correo, telefono, programa) VALUES
--- ('EST001', 'Juan', 'Pérez', 'juan.perez@email.com', '1234567890', 'Ingeniería de Sistemas'),
--- ('EST002', 'María', 'González', 'maria.gonzalez@email.com', '0987654321', 'Administración'),
--- ('EST003', 'Carlos', 'Rodríguez', 'carlos.rodriguez@email.com', '5551234567', 'Derecho');
+## Ejecución Rápida
+
+```bash
+# Ejecutar archivo init.sql
+mysql -u root -p < back-end/database/init.sql
+
+# O desde MySQL
+SOURCE back-end/database/init.sql;
+```
+
+## Consultas de Ejemplo
+
+```sql
+-- Ver todas las tablas
+SHOW TABLES;
+
+-- Ver estudiantes
+SELECT * FROM estudiantes;
+
+-- Ver asimteDncias de un estudiante
+SELECT * FROM asistencias WHERE estudiante_id = 1;
+```
