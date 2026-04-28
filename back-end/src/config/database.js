@@ -1,15 +1,19 @@
 const mysql = require('mysql2/promise');
-require('dotenv').config();
+const config = require('./index');
 
 const pool = mysql.createPool({
-  host: process.env.DB_HOST || 'localhost',
-  port: process.env.DB_PORT || 3306,
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || '',
-  database: process.env.DB_NAME || 'sistema_asistencia',
+  host: config.get('db.host') || 'localhost',
+  port: config.get('db.port') || 3306,
+  user: config.get('db.user') || 'root',
+  password: config.get('db.password') || '',
+  database: config.get('db.name') || 'sistema_asistencia',
+  connectionLimit: config.get('db.connectionLimit') || 20,
   waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0
+  acquireTimeout: 60000,
+  timeout: 60000,
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 0
 });
 
 pool.on('connection', () => {
@@ -19,5 +23,19 @@ pool.on('connection', () => {
 pool.on('error', (err) => {
   console.error('❌ Error de conexión MySQL:', err);
 });
+
+// Health check de la base de datos
+const checkConnection = async () => {
+  try {
+    await pool.query('SELECT 1');
+    console.log('✅ Base de datos conectada correctamente');
+    return true;
+  } catch (err) {
+    console.error('❌ Error al conectar con la base de datos:', err.message);
+    return false;
+  }
+};
+
+checkConnection();
 
 module.exports = pool;

@@ -1,5 +1,26 @@
+const winston = require('winston');
+
+const logger = winston.createLogger({
+  level: 'error',
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.errors({ stack: true }),
+    winston.format.json()
+  ),
+  transports: [
+    new winston.transports.File({ filename: 'logs/error.log' })
+  ]
+});
+
 const errorHandler = (err, req, res, next) => {
-  console.error('Error:', err);
+  logger.error('Error:', {
+    message: err.message,
+    stack: err.stack,
+    path: req.originalUrl,
+    method: req.method,
+    body: req.body,
+    ip: req.ip
+  });
 
   if (err.name === 'ValidationError') {
     const errors = Object.values(err.errors).map(e => ({
@@ -28,21 +49,31 @@ const errorHandler = (err, req, res, next) => {
     });
   }
 
-  if (err.code === 'ER_BAD_FIELD_ERROR') {
-    return res.status(400).json({
+  if (err.message === 'Token inválido' || err.name === 'JsonWebTokenError') {
+    return res.status(401).json({
       success: false,
-      message: 'Campo inválido en la consulta',
-      error: err.message
+      message: 'Token inválido'
     });
   }
 
-  const statusCode = err.statusCode || 500;
-  const message = err.message || 'Error interno del servidor';
+  if (err.message === 'Token expirado' || err.name === 'TokenExpiredError') {
+    return res.status(401).json({
+      success: false,
+      message: 'Token expirado'
+    });
+  }
 
-  res.status(statusCode).json({
+  if (err.message === 'Origen no permitido por CORS') {
+    return res.status(403).json({
+      success: false,
+      message: 'Origen no permitido'
+    });
+  }
+
+  res.status(500).json({
     success: false,
-    message,
-    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+    message: 'Error interno del servidor',
+    error: process.env.NODE_ENV === 'development' ? err.message : undefined
   });
 };
 

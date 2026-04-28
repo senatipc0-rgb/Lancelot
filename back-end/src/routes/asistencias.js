@@ -21,6 +21,24 @@ const asistenciaValidations = [
     .isLength({ max: 500 }).withMessage('La observación no puede exceder 500 caracteres')
 ];
 
+const updateAsistenciaValidations = [
+  body('estudiante_id')
+    .optional()
+    .isInt({ min: 1 }).withMessage('ID de estudiante inválido'),
+
+  body('fecha_asistencia')
+    .optional()
+    .isDate().withMessage('Formato de fecha inválido (YYYY-MM-DD)'),
+
+  body('estado')
+    .optional()
+    .isIn(['presente', 'ausente', 'tarde', 'eximido']).withMessage('Estado no válido'),
+
+  body('observacion')
+    .optional({ nullable: true })
+    .isLength({ max: 500 }).withMessage('La observación no puede exceder 500 caracteres')
+];
+
 const bulkAsistenciaValidations = [
   body('fecha_asistencia')
     .notEmpty().withMessage('La fecha de asistencia es obligatoria')
@@ -59,7 +77,7 @@ router.post('/', asistenciaValidations, asistenciaController.createAttendance);
 
 router.post('/bulk', bulkAsistenciaValidations, asistenciaController.createBulkAttendance);
 
-router.put('/:id', asistenciaValidations, asistenciaController.updateAttendance);
+router.put('/:id', updateAsistenciaValidations, asistenciaController.updateAttendance);
 
 router.delete('/:id', asistenciaController.deleteAttendance);
 

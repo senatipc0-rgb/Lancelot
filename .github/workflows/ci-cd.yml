@@ -1,0 +1,127 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: sistema_asistencia
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: back-end/package-lock.json
+    
+    - name: Install dependencies
+      run: npm ci
+      working-directory: back-end
+    
+    - name: Wait for MySQL
+      run: |
+        for i in $(seq 1 30); do
+          mysqladmin ping -h 127.0.0.1 -P 3306 -u root --password=root --silent && break
+          echo "Waiting for MySQL..."
+          sleep 2
+        done
+    
+    - name: Run database migrations
+      run: |
+        mysql -h 127.0.0.1 -P 3306 -u root --password=root sistema_asistencia < back-end/database/init.sql
+        mysql -h 127.0.0.1 -P 3306 -u root --password=root sistema_asistencia < back-end/database/init_usuarios.sql
+      env:
+        DB_HOST: 127.0.0.1
+        DB_PORT: 3306
+        DB_USER: root
+        DB_PASSWORD: root
+        DB_NAME: sistema_asistencia
+    
+    - name: Run tests
+      run: npm test
+      working-directory: back-end
+      env:
+        NODE_ENV: test
+        DB_HOST: 127.0.0.1
+        DB_PORT: 3306
+        DB_USER: root
+        DB_PASSWORD: root
+        DB_NAME: sistema_asistencia
+        JWT_SECRET: test_secret_key
+        LOG_LEVEL: error
+    
+    - name: Upload coverage
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: coverage-${{ github.sha }}
+        path: back-end/coverage/
+        retention-days: 7
+
+  build:
+    runs-on: ubuntu-latest
+    needs: test
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install backend dependencies
+      run: npm ci
+      working-directory: back-end
+    
+    - name: Install frontend dependencies
+      run: npm ci
+      working-directory: front-end
+    
+    - name: Build frontend
+      run: npm run build
+      working-directory: front-end
+    
+    - name: Verify build
+      run: |
+        [ -d dist ] && echo "Build successful"
+        ls -la dist/
+      working-directory: front-end
+
+  security:
+    runs-on: ubuntu-latest
+    needs: test
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Run npm audit
+      run: npm audit --audit-level=moderate
+      working-directory: back-end
+      continue-on-error: true
+    
+    - name: Check for secrets
+      uses: gitleaks/gitleaks-action@v2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

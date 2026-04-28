@@ -104,13 +104,25 @@ class Attendance {
   }
 
   static async update(id, attendanceData) {
-    const { estado, observacion } = attendanceData;
+    const updatableFields = ['estudiante_id', 'fecha_asistencia', 'estado', 'observacion'];
+    const fields = [];
+    const values = [];
+
+    updatableFields.forEach((field) => {
+      if (Object.prototype.hasOwnProperty.call(attendanceData, field)) {
+        fields.push(`${field} = ?`);
+        values.push(attendanceData[field]);
+      }
+    });
+
+    if (fields.length === 0) return false;
+
     const sql = `
       UPDATE asistencias
-      SET estado = ?, observacion = ?, updated_at = NOW()
+      SET ${fields.join(', ')}
       WHERE id = ?
     `;
-    const [result] = await db.execute(sql, [estado, observacion, id]);
+    const [result] = await db.execute(sql, [...values, id]);
     return result.affectedRows > 0;
   }
 
@@ -127,8 +139,8 @@ class Attendance {
         SUM(CASE WHEN estado = 'ausente' THEN 1 ELSE 0 END) as ausente,
         SUM(CASE WHEN estado = 'tarde' THEN 1 ELSE 0 END) as tarde,
         SUM(CASE WHEN estado = 'eximido' THEN 1 ELSE 0 END) as eximido
-      FROM asistencia
-      WHERE estudiante_id = ?
+       FROM asistencias
+       WHERE estudiante_id = ?
     `;
 
     let params = [studentId];

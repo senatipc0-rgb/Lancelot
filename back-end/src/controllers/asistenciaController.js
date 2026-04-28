@@ -234,6 +234,27 @@ const asistenciaController = {
         });
       }
 
+      if (Object.keys(updateData).length === 0) {
+        return res.status(400).json({
+          success: false,
+          message: 'No se enviaron campos para actualizar'
+        });
+      }
+
+      const studentId = updateData.estudiante_id ?? existing.estudiante_id;
+      const attendanceDate = updateData.fecha_asistencia ?? existing.fecha_asistencia;
+
+      if (updateData.estudiante_id || updateData.fecha_asistencia) {
+        const duplicate = await Asistencia.getByStudentAndDate(studentId, attendanceDate);
+        const duplicateFromOtherRecord = duplicate.find((item) => item.id !== Number(id));
+        if (duplicateFromOtherRecord) {
+          return res.status(400).json({
+            success: false,
+            message: 'Ya existe un registro de asistencia para este estudiante en esta fecha'
+          });
+        }
+      }
+
       const success = await Asistencia.update(id, updateData);
 
       if (!success) {

@@ -39,6 +39,12 @@ const api = {
     headers: getHeaders(),
     body: JSON.stringify(data)
   }).then(handleResponse),
+
+  patch: (endpoint, data) => fetch(`${API_URL}/${endpoint}`, {
+    method: 'PATCH',
+    headers: getHeaders(),
+    body: JSON.stringify(data)
+  }).then(handleResponse),
   
   delete: (endpoint) => fetch(`${API_URL}/${endpoint}`, { 
     method: 'DELETE',
@@ -56,8 +62,11 @@ export const estudianteService = {
 
 export const asistenciaService = {
   getAll: () => api.get('asistencias'),
+  getById: (id) => api.get(`asistencias/${id}`),
   getByEstudiante: (estudianteId) => api.get(`asistencias/estudiante/${estudianteId}`),
-  create: (data) => api.post('asistencias', data)
+  create: (data) => api.post('asistencias', data),
+  update: (id, data) => api.put(`asistencias/${id}`, data),
+  delete: (id) => api.delete(`asistencias/${id}`)
 }
 
 export const cursoService = {
@@ -75,6 +84,15 @@ export const inscripcionService = {
   create: (data) => api.post('inscripciones', data),
   update: (id, data) => api.put(`inscripciones/${id}`, data),
   delete: (id) => api.delete(`inscripciones/${id}`)
+}
+
+export const usuarioService = {
+  getAll: () => api.get('usuarios'),
+  create: (data) => api.post('usuarios/register', data),
+  update: (id, data) => api.put(`usuarios/${id}`, data),
+  toggleStatus: (id, esta_activo) => api.patch(`usuarios/${id}/status`, { esta_activo }),
+  delete: (id) => api.delete(`usuarios/${id}`),
+  logout: () => api.post('usuarios/logout', {})
 }
 
 export default api

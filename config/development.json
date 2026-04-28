@@ -1,0 +1,28 @@
+{
+  "env": "development",
+  "port": 3000,
+  "db": {
+    "host": "localhost",
+    "port": 3306,
+    "user": "root",
+    "password": "1234",
+    "name": "sistema_asistencia",
+    "connectionLimit": 20
+  },
+  "jwt": {
+    "secret": "lancelot_secret_key_2026",
+    "expiresIn": "15m",
+    "refreshExpiresIn": "7d"
+  },
+  "cors": {
+    "origins": ["http://localhost:3000", "http://localhost:5173"]
+  },
+  "rateLimit": {
+    "windowMs": 900000,
+    "max": 100
+  },
+  "logging": {
+    "level": "debug",
+    "directory": "logs"
+  }
+}

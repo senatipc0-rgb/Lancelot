@@ -127,7 +127,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { estudianteService } from '../services/api'
-import Swal from 'sweetalert2'
+import { alertError, confirmDelete, toastSuccess } from '../utils/alerts'
 
 const list = ref([])
 const loading = ref(true)
@@ -154,6 +154,7 @@ const load = async () => {
   } catch (e) {
     console.error('Error cargando:', e.message)
     list.value = []
+    alertError(e.message || 'Verifica que el backend esté activo', 'No se pudieron cargar estudiantes')
   } finally { 
     loading.value = false 
   }
@@ -168,9 +169,9 @@ const save = async () => {
     else await estudianteService.create(form.value)
     clear()
     await load()
-    Swal.fire({ icon: 'success', title: edit.value ? 'Actualizado' : 'Guardado', timer: 1400, showConfirmButton: false, toast: true, position: 'top-end' })
+    toastSuccess(edit.value ? 'Actualizado' : 'Guardado')
   } catch (e) {
-    Swal.fire({ icon: 'error', title: 'Error', text: e.message })
+    alertError(e.message)
   } finally {
     saving.value = false
   }
@@ -185,20 +186,11 @@ const editItem = (item) => {
 }
 
 const deleteItem = async (id) => {
-  const r = await Swal.fire({
-    title: '¿Eliminar estudiante?',
-    text: 'Esta acción no se puede deshacer.',
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonText: 'Sí, eliminar',
-    cancelButtonText: 'Cancelar',
-    confirmButtonColor: '#dc2626',
-    cancelButtonColor: '#6b7280'
-  })
+  const r = await confirmDelete('¿Eliminar estudiante?')
   if (r.isConfirmed) {
     await estudianteService.delete(id)
     await load()
-    Swal.fire({ icon: 'success', title: 'Eliminado', timer: 1200, showConfirmButton: false, toast: true, position: 'top-end' })
+    toastSuccess('Eliminado', 1200)
   }
 }
 

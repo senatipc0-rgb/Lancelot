@@ -1,91 +1,107 @@
 <template>
-  <div class="home">
-    <!-- Hero -->
-    <div class="hero-card">
-      <div class="hero-content">
-        <div class="hero-badge">Sistema Académico</div>
-        <h1 class="hero-title">Bienvenido a EduGest</h1>
-        <p class="hero-desc">Gestiona estudiantes, cursos, inscripciones y asistencias desde un solo lugar.</p>
-        <div class="hero-stats">
-          <div class="stat">
-            <span class="stat-num">{{ stats.estudiantes }}</span>
-            <span class="stat-label">Estudiantes</span>
-          </div>
-          <div class="stat-divider"></div>
-          <div class="stat">
-            <span class="stat-num">{{ stats.cursos }}</span>
-            <span class="stat-label">Cursos</span>
-          </div>
-          <div class="stat-divider"></div>
-          <div class="stat">
-            <span class="stat-num">{{ stats.inscripciones }}</span>
-            <span class="stat-label">Inscripciones</span>
-          </div>
-          <div class="stat-divider"></div>
-          <div class="stat">
-            <span class="stat-num">{{ stats.asistencias }}</span>
-            <span class="stat-label">Asistencias</span>
-          </div>
+  <div class="space-y-6">
+    <section class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-blue-700 via-indigo-700 to-violet-700 p-6 shadow-xl md:p-8">
+      <div class="absolute -right-12 -top-12 h-48 w-48 rounded-full bg-white/10"></div>
+      <div class="absolute -bottom-20 right-20 h-64 w-64 rounded-full bg-white/5"></div>
+      <div class="relative z-10 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+        <div>
+          <span class="inline-flex rounded-full bg-white/20 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-white/90">Sistema Académico</span>
+          <h1 class="mt-3 text-3xl font-bold text-white md:text-4xl">Bienvenido a EduGest</h1>
+          <p class="mt-2 max-w-2xl text-sm text-blue-50 md:text-base">Gestiona estudiantes, cursos, inscripciones y asistencias desde un solo lugar.</p>
+        </div>
+        <div class="text-6xl drop-shadow-lg md:text-7xl">🎓</div>
+      </div>
+      <div class="relative z-10 mt-6 grid grid-cols-2 gap-3 md:grid-cols-4">
+        <div class="rounded-2xl bg-white/15 px-4 py-3 text-center backdrop-blur">
+          <p class="text-2xl font-bold text-white">{{ stats.estudiantes }}</p>
+          <p class="text-xs font-medium uppercase tracking-wider text-blue-100">Estudiantes</p>
+        </div>
+        <div class="rounded-2xl bg-white/15 px-4 py-3 text-center backdrop-blur">
+          <p class="text-2xl font-bold text-white">{{ stats.cursos }}</p>
+          <p class="text-xs font-medium uppercase tracking-wider text-blue-100">Cursos</p>
+        </div>
+        <div class="rounded-2xl bg-white/15 px-4 py-3 text-center backdrop-blur">
+          <p class="text-2xl font-bold text-white">{{ stats.inscripciones }}</p>
+          <p class="text-xs font-medium uppercase tracking-wider text-blue-100">Inscripciones</p>
+        </div>
+        <div class="rounded-2xl bg-white/15 px-4 py-3 text-center backdrop-blur">
+          <p class="text-2xl font-bold text-white">{{ stats.asistencias }}</p>
+          <p class="text-xs font-medium uppercase tracking-wider text-blue-100">Asistencias</p>
         </div>
       </div>
-      <div class="hero-illustration">🎓</div>
-    </div>
+    </section>
 
-    <!-- Quick access cards -->
-    <h2 class="section-title">Acceso rápido</h2>
-    <div class="cards-grid">
-      <router-link to="/estudiantes" class="quick-card blue">
-        <div class="qc-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        </div>
-        <div class="qc-body">
-          <h3>Estudiantes</h3>
-          <p>Registra y gestiona el padrón de estudiantes</p>
-        </div>
-        <div class="qc-arrow">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-        </div>
-      </router-link>
+    <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <h2 class="mb-4 text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">Acceso rápido</h2>
+      <div class="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
+        <router-link to="/estudiantes" class="group flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4 transition hover:-translate-y-0.5 hover:border-blue-200 hover:bg-blue-50">
+          <div class="rounded-lg bg-blue-100 p-2 text-blue-700">
+            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <div class="min-w-0 flex-1">
+            <p class="text-sm font-semibold text-slate-800">Estudiantes</p>
+            <p class="text-xs text-slate-500">Gestiona el padrón estudiantil</p>
+          </div>
+          <span class="text-slate-400 transition group-hover:translate-x-1 group-hover:text-slate-600">›</span>
+        </router-link>
 
-      <router-link to="/cursos" class="quick-card purple">
-        <div class="qc-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-        </div>
-        <div class="qc-body">
-          <h3>Cursos</h3>
-          <p>Administra el catálogo de cursos académicos</p>
-        </div>
-        <div class="qc-arrow">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-        </div>
-      </router-link>
+        <router-link to="/cursos" class="group flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4 transition hover:-translate-y-0.5 hover:border-violet-200 hover:bg-violet-50">
+          <div class="rounded-lg bg-violet-100 p-2 text-violet-700">
+            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          </div>
+          <div class="min-w-0 flex-1">
+            <p class="text-sm font-semibold text-slate-800">Cursos</p>
+            <p class="text-xs text-slate-500">Administra la oferta académica</p>
+          </div>
+          <span class="text-slate-400 transition group-hover:translate-x-1 group-hover:text-slate-600">›</span>
+        </router-link>
 
-      <router-link to="/inscripciones" class="quick-card green">
-        <div class="qc-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-        </div>
-        <div class="qc-body">
-          <h3>Inscripciones</h3>
-          <p>Inscribe estudiantes a los cursos disponibles</p>
-        </div>
-        <div class="qc-arrow">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-        </div>
-      </router-link>
+        <router-link to="/inscripciones" class="group flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4 transition hover:-translate-y-0.5 hover:border-emerald-200 hover:bg-emerald-50">
+          <div class="rounded-lg bg-emerald-100 p-2 text-emerald-700">
+            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          </div>
+          <div class="min-w-0 flex-1">
+            <p class="text-sm font-semibold text-slate-800">Inscripciones</p>
+            <p class="text-xs text-slate-500">Relaciona estudiantes y cursos</p>
+          </div>
+          <span class="text-slate-400 transition group-hover:translate-x-1 group-hover:text-slate-600">›</span>
+        </router-link>
 
-      <router-link to="/asistencias" class="quick-card orange">
-        <div class="qc-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-        </div>
-        <div class="qc-body">
-          <h3>Asistencias</h3>
-          <p>Registra y consulta el control de asistencia</p>
-        </div>
-        <div class="qc-arrow">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-        </div>
+        <router-link to="/asistencias" class="group flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4 transition hover:-translate-y-0.5 hover:border-amber-200 hover:bg-amber-50">
+          <div class="rounded-lg bg-amber-100 p-2 text-amber-700">
+            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          </div>
+          <div class="min-w-0 flex-1">
+            <p class="text-sm font-semibold text-slate-800">Asistencias</p>
+            <p class="text-xs text-slate-500">Control diario de clases</p>
+          </div>
+          <span class="text-slate-400 transition group-hover:translate-x-1 group-hover:text-slate-600">›</span>
+        </router-link>
+      </div>
+    </section>
+
+    <section class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <router-link to="/usuarios" class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+        <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Nuevo módulo</p>
+        <h3 class="mt-2 text-lg font-bold text-slate-800">Usuarios</h3>
+        <p class="mt-1 text-sm text-slate-500">CRUD de usuarios y administración de roles.</p>
       </router-link>
-    </div>
+      <router-link to="/reportes" class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+        <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Nuevo módulo</p>
+        <h3 class="mt-2 text-lg font-bold text-slate-800">Reportes</h3>
+        <p class="mt-1 text-sm text-slate-500">Indicadores y análisis académicos.</p>
+      </router-link>
+      <router-link to="/agenda" class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+        <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Nuevo módulo</p>
+        <h3 class="mt-2 text-lg font-bold text-slate-800">Agenda</h3>
+        <p class="mt-1 text-sm text-slate-500">Planificación de actividades internas.</p>
+      </router-link>
+      <router-link to="/notificaciones" class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+        <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Nuevo módulo</p>
+        <h3 class="mt-2 text-lg font-bold text-slate-800">Notificaciones</h3>
+        <p class="mt-1 text-sm text-slate-500">Alertas automáticas del sistema.</p>
+      </router-link>
+    </section>
   </div>
 </template>
 
@@ -112,218 +128,3 @@ onMounted(async () => {
   } catch (_) {}
 })
 </script>
-
-<style scoped>
-.home { max-width: 1100px; }
-
-/* Hero */
-.hero-card {
-  background: linear-gradient(135deg, var(--primary) 0%, #7c3aed 100%);
-  border-radius: var(--radius-xl);
-  padding: 2.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-  overflow: hidden;
-  position: relative;
-}
-
-.hero-card::before {
-  content: '';
-  position: absolute;
-  top: -40px;
-  right: 120px;
-  width: 200px;
-  height: 200px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.06);
-}
-
-.hero-card::after {
-  content: '';
-  position: absolute;
-  bottom: -60px;
-  right: 60px;
-  width: 280px;
-  height: 280px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.04);
-}
-
-.hero-content { position: relative; z-index: 1; }
-
-.hero-badge {
-  display: inline-block;
-  background: rgba(255,255,255,0.2);
-  color: rgba(255,255,255,0.9);
-  font-size: 0.7rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  padding: 0.3rem 0.75rem;
-  border-radius: 99px;
-  margin-bottom: 0.875rem;
-}
-
-.hero-title {
-  font-size: 1.875rem;
-  font-weight: 700;
-  color: #fff;
-  margin-bottom: 0.5rem;
-  line-height: 1.2;
-}
-
-.hero-desc {
-  color: rgba(255,255,255,0.8);
-  font-size: 0.9375rem;
-  margin-bottom: 1.75rem;
-  max-width: 480px;
-}
-
-.hero-stats {
-  display: flex;
-  align-items: center;
-  gap: 1.25rem;
-  flex-wrap: wrap;
-}
-
-.stat { text-align: center; }
-
-.stat-num {
-  display: block;
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #fff;
-  line-height: 1;
-}
-
-.stat-label {
-  display: block;
-  font-size: 0.7rem;
-  color: rgba(255,255,255,0.7);
-  margin-top: 0.2rem;
-  font-weight: 500;
-}
-
-.stat-divider {
-  width: 1px;
-  height: 32px;
-  background: rgba(255,255,255,0.2);
-}
-
-.hero-illustration {
-  font-size: 5rem;
-  line-height: 1;
-  position: relative;
-  z-index: 1;
-  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.2));
-  flex-shrink: 0;
-}
-
-/* Section title */
-.section-title {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--text-muted);
-  margin-bottom: 1rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  font-size: 0.75rem;
-}
-
-/* Cards grid */
-.cards-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 1rem;
-}
-
-.quick-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 1.25rem;
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
-  position: relative;
-  overflow: hidden;
-}
-
-.quick-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-}
-
-.quick-card.blue::before { background: var(--primary); }
-.quick-card.purple::before { background: var(--purple); }
-.quick-card.green::before { background: var(--success); }
-.quick-card.orange::before { background: var(--warning); }
-
-.quick-card:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-lg);
-  border-color: transparent;
-}
-
-.qc-icon {
-  width: 44px;
-  height: 44px;
-  border-radius: var(--radius);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.qc-icon svg { width: 22px; height: 22px; }
-
-.quick-card.blue .qc-icon { background: var(--primary-muted); color: var(--primary); }
-.quick-card.purple .qc-icon { background: var(--purple-light); color: var(--purple); }
-.quick-card.green .qc-icon { background: var(--success-light); color: var(--success); }
-.quick-card.orange .qc-icon { background: var(--warning-light); color: var(--warning); }
-
-.qc-body { flex: 1; min-width: 0; }
-
-.qc-body h3 {
-  font-size: 0.9375rem;
-  font-weight: 600;
-  color: var(--text);
-  margin-bottom: 0.2rem;
-}
-
-.qc-body p {
-  font-size: 0.8125rem;
-  color: var(--text-muted);
-  line-height: 1.4;
-}
-
-.qc-arrow {
-  color: var(--text-light);
-  flex-shrink: 0;
-  transition: transform var(--transition), color var(--transition);
-}
-
-.qc-arrow svg { width: 18px; height: 18px; display: block; }
-
-.quick-card:hover .qc-arrow {
-  transform: translateX(3px);
-  color: var(--text-muted);
-}
-
-@media (max-width: 600px) {
-  .hero-card { flex-direction: column; text-align: center; padding: 1.75rem 1.25rem; }
-  .hero-illustration { font-size: 3.5rem; }
-  .hero-stats { justify-content: center; }
-  .hero-title { font-size: 1.5rem; }
-}
-</style>

@@ -1,21 +1,56 @@
 const jwt = require('jsonwebtoken');
+const config = require('../config');
 
 const auth = (req, res, next) => {
   try {
-    const token = req.headers.authorization?.split(' ')[1];
+    const authHeader = req.headers.authorization;
 
-    if (!token) {
+    if (!authHeader) {
       return res.status(401).json({
         success: false,
         message: 'No se proporcionó token de acceso'
       });
     }
 
-    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    const parts = authHeader.split(' ');
+
+    if (parts.length !== 2) {
+      return res.status(401).json({
+        success: false,
+        message: 'Formato de token inválido'
+      });
+    }
+
+    const [scheme, token] = parts;
+
+    if (!/^Bearer$/i.test(scheme)) {
+      return res.status(401).json({
+        success: false,
+        message: 'Formato de token inválido'
+      });
+    }
+
+    jwt.verify(token, config.get('jwt.secret'), {
+      issuer: 'lancelot-system'
+    }, (err, decoded) => {
       if (err) {
+        if (err.name === 'TokenExpiredError') {
+          return res.status(401).json({
+            success: false,
+            message: 'Token expirado, por favor renueve su sesión'
+          });
+        }
         return res.status(401).json({
           success: false,
-          message: 'Token inválido o expirado'
+          message: 'Token inválido'
+        });
+      }
+
+      // Verificar que sea un token de acceso
+      if (decoded.type !== 'access') {
+        return res.status(401).json({
+          success: false,
+          message: 'Tipo de token inválido'
         });
       }
 
@@ -23,10 +58,10 @@ const auth = (req, res, next) => {
       next();
     });
   } catch (error) {
+    console.error('Error en autenticación:', error);
     res.status(500).json({
       success: false,
-      message: 'Error en la autenticación',
-      error: error.message
+      message: 'Error en la autenticación'
     });
   }
 };

@@ -34,7 +34,7 @@
     <transition name="slide-down">
       <div v-if="showForm" class="form-card">
         <div class="form-card-header">
-          <h2>Registrar asistencia</h2>
+          <h2>{{ edit ? 'Editar asistencia' : 'Registrar asistencia' }}</h2>
           <button @click="clear" class="btn-close" aria-label="Cerrar">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
@@ -70,7 +70,7 @@
             <button type="button" @click="clear" class="btn btn-ghost">Cancelar</button>
             <button type="submit" class="btn btn-primary" :disabled="saving">
               <span v-if="saving" class="spinner"></span>
-              Registrar
+              {{ edit ? 'Guardar cambios' : 'Registrar' }}
             </button>
           </div>
         </form>
@@ -119,6 +119,7 @@
               <th>Fecha</th>
               <th>Estado</th>
               <th>Observación</th>
+              <th class="th-actions">Acciones</th>
             </tr>
           </thead>
           <tbody>
@@ -141,6 +142,14 @@
                 </span>
               </td>
               <td class="td-muted">{{ item.observacion || '—' }}</td>
+              <td class="td-actions">
+                <button @click="editItem(item)" class="icon-btn" title="Editar">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                </button>
+                <button @click="deleteItem(item.id)" class="icon-btn icon-btn-danger" title="Eliminar">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+                </button>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -152,13 +161,15 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { asistenciaService, estudianteService } from '../services/api'
-import Swal from 'sweetalert2'
+import { alertError, confirmDelete, toastSuccess } from '../utils/alerts'
 
 const list = ref([])
 const estudiantes = ref([])
 const loading = ref(true)
 const saving = ref(false)
 const showForm = ref(false)
+const edit = ref(false)
+const editId = ref(null)
 const search = ref('')
 const filterEstado = ref('')
 const form = ref({ estudiante_id: '', fecha_asistencia: new Date().toISOString().split('T')[0], estado: 'presente', observacion: '' })
@@ -219,19 +230,51 @@ const openNew = () => { clear(); showForm.value = true }
 const save = async () => {
   saving.value = true
   try {
-    await asistenciaService.create(form.value)
+    if (edit.value) {
+      await asistenciaService.update(editId.value, form.value)
+    } else {
+      await asistenciaService.create(form.value)
+    }
     clear()
     await load()
-    Swal.fire({ icon: 'success', title: 'Asistencia registrada', timer: 1400, showConfirmButton: false, toast: true, position: 'top-end' })
+    toastSuccess(edit.value ? 'Asistencia actualizada' : 'Asistencia registrada')
   } catch (e) {
-    Swal.fire({ icon: 'error', title: 'Error', text: e.message })
+    alertError(e.message)
   } finally {
     saving.value = false
   }
 }
 
+const editItem = (item) => {
+  edit.value = true
+  editId.value = item.id
+  form.value = {
+    estudiante_id: item.estudiante_id,
+    fecha_asistencia: item.fecha_asistencia?.split('T')[0] || item.fecha_asistencia,
+    estado: item.estado,
+    observacion: item.observacion || ''
+  }
+  showForm.value = true
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
+
+const deleteItem = async (id) => {
+  const r = await confirmDelete('¿Eliminar asistencia?')
+  if (!r.isConfirmed) return
+
+  try {
+    await asistenciaService.delete(id)
+    await load()
+    toastSuccess('Asistencia eliminada', 1200)
+  } catch (e) {
+    alertError(e.message)
+  }
+}
+
 const clear = () => {
   showForm.value = false
+  edit.value = false
+  editId.value = null
   form.value = { estudiante_id: '', fecha_asistencia: new Date().toISOString().split('T')[0], estado: 'presente', observacion: '' }
 }
 
@@ -239,23 +282,25 @@ onMounted(load)
 </script>
 
 <style scoped>
-.cols-2 { grid-template-columns: repeat(2, 1fr); }
+.cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 
 .filter-select {
-  padding: 0.4rem 0.75rem;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+  padding: 0.55rem 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
   font-size: 0.875rem;
-  background: var(--surface-2);
-  color: var(--text);
+  background: #f8fafc;
+  color: #334155;
   cursor: pointer;
   outline: none;
-  transition: border-color var(--transition);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.filter-select:focus { border-color: var(--primary); }
+.filter-select:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+}
 
-/* Summary chips */
 .summary-row {
   display: flex;
   gap: 0.75rem;
@@ -264,23 +309,21 @@ onMounted(load)
 }
 
 .summary-chip {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  padding: 0.4rem 0.875rem;
-  border-radius: 99px;
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
   font-size: 0.8125rem;
   font-weight: 600;
 }
 
 .summary-chip svg { width: 14px; height: 14px; }
+.summary-chip.green { background: #dcfce7; color: #15803d; }
+.summary-chip.red { background: #fee2e2; color: #b91c1c; }
+.summary-chip.yellow { background: #fef3c7; color: #b45309; }
+.summary-chip.purple { background: #ede9fe; color: #6d28d9; }
 
-.summary-chip.green { background: var(--success-light); color: var(--success); }
-.summary-chip.red { background: var(--danger-light); color: var(--danger); }
-.summary-chip.yellow { background: var(--warning-light); color: var(--warning); }
-.summary-chip.purple { background: var(--purple-light); color: var(--purple); }
-
-/* Student cell */
 .student-cell {
   display: flex;
   align-items: center;
@@ -288,9 +331,9 @@ onMounted(load)
 }
 
 .student-avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
   color: #fff;
   font-size: 0.65rem;
   font-weight: 700;
@@ -298,17 +341,16 @@ onMounted(load)
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
 }
 
 .td-code {
   font-size: 0.75rem;
-  color: var(--text-light);
+  color: #94a3b8;
   margin-top: 0.1rem;
 }
 
 @media (max-width: 480px) {
   .cols-2 { grid-template-columns: 1fr; }
-  .summary-row { gap: 0.5rem; }
 }
 </style>
